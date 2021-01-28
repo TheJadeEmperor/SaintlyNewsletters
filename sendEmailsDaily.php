@@ -6,12 +6,11 @@ include $dir.'sendgrid/vendor/autoload.php';
 
 date_default_timezone_set('America/New_York');
 set_time_limit(0); //don't let script time out
-
-
 //cron job command - php /home2/codegeas/backups/newsletters/sendEmailsDaily.php
 
 //debug mode or live mode
-if ($_SERVER['SERVER_NAME'] == 'localhost') {
+$server = $_SERVER['SERVER_NAME'];
+if ($server == 'localhost' || $server == 'saintlynewsletters.test') {
 	$newline = '<br />';   //debugging newline
 	$cronjob = 0;
 	
@@ -41,16 +40,15 @@ while($n = $resN->fetch_assoc()) {
 	);
 }
 
+if($cronjob == 0){
+	//print("<pre>".print_r($newslArray['makemoneysurveys'], true)."</pre>");
+}
 
-//print("<pre>".print_r($newslArray, true)."</pre>");
-//print("<pre>".print_r($newslArray['BlackCrimesMatter'], true)."</pre>");
-
-
-//array of lists | series name => list_id
+//series name from DB => list_id from sendgrid
 $sendGridList = array(
-	'BlackCrimesMatter' => '6d1d107d-9fe7-404e-9e17-94c2a51eea8c', 
+	'BlackCrimesMatter' => '6d1d107d-9fe7-404e-9e17-94c2a51eea8c',
 	'AnimeFanservice' => '1d43f5df-ff51-4542-a472-3f8de8a771f7', 
-	'MakeMoneySurveys' => '4b47a362-1c44-4103-90f2-feeb13cd02c4'
+	'makemoneysurveys' => '4b47a362-1c44-4103-90f2-feeb13cd02c4'
 );
 
 $senderNameList = array(
@@ -59,7 +57,7 @@ $senderNameList = array(
 		'senderName' => 'BCM'),
 	'AnimeFanservice' => array(
 		'senderEmail' => 'animefavoritechannel@gmail.com',
-		'senderName' => 'Anime Empire'),  
+		'senderName' => 'Anime Empire'),
 	'MakeMoneySurveys' => array(
 		'senderEmail' => 'contact@bestpayingsites.com',
 		'senderName' => 'Best Paying Surveys'),  
@@ -79,8 +77,11 @@ foreach($sendGridList as $series => $list_id) {
 	
 	//get all contacts in list
 	$list = $sendGridAPI -> list_get ($list_id);
- 
-//print_r($list);
+
+	if($cronjob == 0) { //show array of contacts
+		//print("<pre>".print_r($list->contact_sample[0], true)."</pre>");
+	}
+	
 	if(!empty($list))
 	foreach($list->contact_sample as $contact) {
 
@@ -141,14 +142,11 @@ foreach($sendGridList as $series => $list_id) {
 						echo ' 1';
 					else
 						echo ' 0: '.mysqli_error();
-				 
 				}
 				else {
 					print("<pre>".print_r($response, true)."</pre>");
 				}
-
-			}
-	
+			}	
 		}
 		else 
 			echo ' false';

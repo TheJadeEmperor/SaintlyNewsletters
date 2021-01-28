@@ -45,41 +45,6 @@ else if ($action == 'single_send') { //single broadcast
 }
 else if ($action == 'contact_add') {
 		
-	set_time_limit(0);
-	//database info goes here
-	//////////////////////////////
-	$dbHost = 'localhost';
-	$dbUser = 'root';
-	$dbPW = 'password';
-	$dbName = 'mms';
-	/////////////////////////////
-	global $conn;
-	//connect to database, returns resource 
-	$conn = database($dbHost, $dbUser, $dbPW, $dbName);
-
-	$row = 1;
-	if (($handle = fopen("allsubs.csv", "r")) !== FALSE) {
-		while (($data = fgetcsv($handle, 100, ",")) !== FALSE) {
-			echo ''.$row.' '. $data[0]. "<br />\n";
-			$row++;
-
-			$info = array(
-				'list_id' => $list_id, 
-				'contact' => array(
-					'email' => $data[0],
-					'first_name' => 'PTC User',
-					'join_date' => date('Y-m-d'),
-					),
-			);
-
-			
-			$sendGridAPI->contact_add($info);
-			
-		}
-		fclose($handle);
-	}
-	exit;
-
 
 	$info = array(
 		'list_id' => $list_id,
@@ -150,10 +115,10 @@ else if ($action == 'list_get') {
 
 }
 else if ($action == 'list_reset') {
-	exit;
-	$dateToReset = '2021-01-20'; 
-
-	$list = $sendGridAPI -> list_get ($list_id); 
+	
+	$dateToReset = '2021-01-27'; 
+echo $list_id;
+	$list = $sendGridAPI->list_get ($list_id); 
 
 	echo 'name: '.$list->name.' <br />'; 
 	echo 'id: '.$list->id.' <br />'; 
@@ -191,3 +156,5 @@ else if ($action == 'list_reset') {
 <p><a href="?action=list_add">?action=list_add</a></p>
 
 <p><a href="?action=list_get">?action=list_get</a></p>
+
+<p><a href="?action=list_reset">?action=list_reset</a></p>

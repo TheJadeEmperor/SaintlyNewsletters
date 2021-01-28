@@ -1,12 +1,12 @@
 <?php
 //sends one email to a recipient
 function sendEmail ($sendgrid, $email, $newsletterData) {
-	
+
 	global $approvedSenderEmail;
+
+	//echo ' sendEmail '; print("<pre>".print_r($newsletterData['senderEmail'], true)."</pre>");
 	
-	//echo ' sendEmail '.$approvedSenderEmail.'..';
-	
-	$email->setFrom($approvedSenderEmail, $newsletterData['senderName']);
+	$email->setFrom($newsletterData['senderEmail'], $newsletterData['senderName']);
 	$email->setSubject($newsletterData['subject']);
 	$email->addTo($newsletterData['subscriberEmail'], $newsletterData['subscriberName']);
 	$email->addContent(
@@ -15,13 +15,9 @@ function sendEmail ($sendgrid, $email, $newsletterData) {
 
 	try {
 		$response = $sendgrid->send($email);
-		print $response->statusCode() . "\n";
-		print_r($response->headers());
-		print $response->body() . "\n";
 	} catch (Exception $e) {
 		echo 'Caught exception: '. $e->getMessage() ."\n";
 	}
-	
 	return $response;
 }
 
@@ -112,7 +108,7 @@ class sendGridAPI {
 	public function list_delete ($list_id) {
 				
 			//	echo "https://api.sendgrid.com/v3/contactdb/lists/".$list_id."?delete_contacts=true";
-		echo $this->sendgridAPIKey;
+				echo $this->sendgridAPIKey;
 		$curl = curl_init();
 
 		curl_setopt_array($curl, array(
@@ -178,19 +174,19 @@ class sendGridAPI {
 		echo $contact_data['contact']['email'];
 
 		curl_setopt_array($curl, array(
-			CURLOPT_URL => "https://api.sendgrid.com/v3/marketing/contacts",
-			CURLOPT_RETURNTRANSFER => true,
-			CURLOPT_ENCODING => "",
-			CURLOPT_MAXREDIRS => 10,
-			CURLOPT_TIMEOUT => 30,
-			CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
-			CURLOPT_CUSTOMREQUEST => "PUT",
-			CURLOPT_POSTFIELDS => '{"list_ids":["'.$contact_data['list_id'].'"],"contacts":[{"email":"'.$contact_data['contact']['email'].'","first_name":"'.$contact_data['contact']['first_name'].'","city":"'.$contact_data['contact']['join_date'].'","state_province_region":"'.$contact_data['contact']['origin'].'","custom_fields":{}}]}',
-			CURLOPT_HTTPHEADER => array(
-			  "authorization: Bearer ".$this->sendgridAPIKey,
-			  "content-type: application/json"
-			),
-		  ));
+		  CURLOPT_URL => "https://api.sendgrid.com/v3/marketing/contacts",
+		  CURLOPT_RETURNTRANSFER => true,
+		  CURLOPT_ENCODING => "",
+		  CURLOPT_MAXREDIRS => 10,
+		  CURLOPT_TIMEOUT => 30,
+		  CURLOPT_HTTP_VERSION => CURL_HTTP_VERSION_1_1,
+		  CURLOPT_CUSTOMREQUEST => "PUT",
+		  CURLOPT_POSTFIELDS => '{"list_ids":["'.$contact_data['list_id'].'"],"contacts":[{"email":"'.$contact_data['contact']['email'].'","first_name":"'.$contact_data['contact']['first_name'].'","city":"'.$contact_data['contact']['join_date'].'","custom_fields":{}}]}',
+		  CURLOPT_HTTPHEADER => array(
+			"authorization: Bearer ".$this->sendgridAPIKey,
+			"content-type: application/json"
+		  ),
+		));
 
 		$response = curl_exec($curl);
 		$err = curl_error($curl);
