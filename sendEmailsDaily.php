@@ -58,7 +58,7 @@ $senderNameList = array(
 	'AnimeFanservice' => array(
 		'senderEmail' => 'animefavoritechannel@gmail.com',
 		'senderName' => 'Anime Empire'),
-	'MakeMoneySurveys' => array(
+	'makemoneysurveys' => array(
 		'senderEmail' => 'contact@bestpayingsites.com',
 		'senderName' => 'Best Paying Surveys'),  
 );
@@ -105,9 +105,9 @@ foreach($sendGridList as $series => $list_id) {
 		if(is_array($thisNewsletter)) {
 			$shortSubject = substr($thisNewsletter['subject'], 0, 25);
 			echo $email.' | '.$contact->city.' | ('.$newslDay.') | true | '.$shortSubject.'... | ';
-	 
+//	 echo __LINE__.' ';
 			$html_code = stripslashes($thisNewsletter['html_code']);
-		
+//	echo __LINE__.' ';
 			//sendgrid send email
 			$newsletterData = array(
 				'subject' => $thisNewsletter['subject'],
@@ -120,12 +120,11 @@ foreach($sendGridList as $series => $list_id) {
 
 			//send the newsletter - live only
 			if($cronjob == 1) {
-
+	
 				$sendgridMail = new \SendGrid\Mail\Mail(); 
 				$sendgridClass = new \SendGrid(SENDGRID_API_KEY);
-
+ 
 				$response = sendEmail($sendgridClass, $sendgridMail, $newsletterData); 
-				
 				//print("<pre>".print_r($response, true)."</pre>");
 
 				$statusCode = $response->statusCode() ;

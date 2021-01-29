@@ -1,12 +1,15 @@
 <?php
 //sends one email to a recipient
 function sendEmail ($sendgrid, $email, $newsletterData) {
-
 	global $approvedSenderEmail;
 
+	$senderEmail = $newsletterData['senderEmail'];
 	//echo ' sendEmail '; print("<pre>".print_r($newsletterData['senderEmail'], true)."</pre>");
+	if(!$senderEmail) { //make sure from email is never empty
+		$senderEmail = $approvedSenderEmail; 
+	}
 	
-	$email->setFrom($newsletterData['senderEmail'], $newsletterData['senderName']);
+	$email->setFrom($senderEmail, $newsletterData['senderName']);
 	$email->setSubject($newsletterData['subject']);
 	$email->addTo($newsletterData['subscriberEmail'], $newsletterData['subscriberName']);
 	$email->addContent(

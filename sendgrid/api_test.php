@@ -115,9 +115,9 @@ else if ($action == 'list_get') {
 
 }
 else if ($action == 'list_reset') {
-	
+	exit;
 	$dateToReset = '2021-01-27'; 
-echo $list_id;
+
 	$list = $sendGridAPI->list_get ($list_id); 
 
 	echo 'name: '.$list->name.' <br />'; 
