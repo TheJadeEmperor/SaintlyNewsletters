@@ -10,6 +10,7 @@ $sendGridAPI = new sendGridAPI(SENDGRID_API_KEY);
 $list_id = '6908666b-313c-4140-8082-99cd156e5f52'; //BCM newsletter
 $list_id = '1d43f5df-ff51-4542-a472-3f8de8a771f7'; //Anime newsletter
 $list_id = '4b47a362-1c44-4103-90f2-feeb13cd02c4'; //MMS Newsletter
+$list_id = 'f9033b09-3a99-4a95-81f9-66a72cd7994d'; //NUS newsletter
 
 $action = $_GET['action'];
 
@@ -114,9 +115,8 @@ else if ($action == 'list_get') {
 	echo $output;
 
 }
-else if ($action == 'list_reset') {
-	exit;
-	$dateToReset = '2021-01-27'; 
+else if ($action == 'list_reset') { 
+	$dateToReset = '2021-01-30'; 
 
 	$list = $sendGridAPI->list_get ($list_id); 
 

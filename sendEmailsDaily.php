@@ -48,7 +48,8 @@ if($cronjob == 0){
 $sendGridList = array(
 	'BlackCrimesMatter' => '6d1d107d-9fe7-404e-9e17-94c2a51eea8c',
 	'AnimeFanservice' => '1d43f5df-ff51-4542-a472-3f8de8a771f7', 
-	'makemoneysurveys' => '4b47a362-1c44-4103-90f2-feeb13cd02c4'
+	'makemoneysurveys' => '4b47a362-1c44-4103-90f2-feeb13cd02c4',
+	'NeobuxUltimateStrategy' => 'f9033b09-3a99-4a95-81f9-66a72cd7994d'
 );
 
 $senderNameList = array(
@@ -60,7 +61,10 @@ $senderNameList = array(
 		'senderName' => 'Anime Empire'),
 	'makemoneysurveys' => array(
 		'senderEmail' => 'contact@bestpayingsites.com',
-		'senderName' => 'Best Paying Surveys'),  
+		'senderName' => 'Best Paying Surveys'),
+	'NeobuxUltimateStrategy' => array(
+		'senderEmail' => 'contact@bestpayingsites.com',
+		'senderName' => 'Best Paying Sites'),
 );
 
 echo ' cronjob: '.$cronjob.' ';  
@@ -73,7 +77,7 @@ foreach($sendGridList as $series => $list_id) {
 	
 	$senderName = $senderNameList[$series]['senderName'];
 	$senderEmail = $senderNameList[$series]['senderEmail'];
-	echo $series.' '.$senderName.' '.$senderEmail.' '.$newline; 
+	$output .= $series.' | '.$senderName.' | '.$senderEmail.' | '.$newline; 
 	
 	//get all contacts in list
 	$list = $sendGridAPI -> list_get ($list_id);
@@ -104,14 +108,14 @@ foreach($sendGridList as $series => $list_id) {
 		//if match 
 		if(is_array($thisNewsletter)) {
 			$shortSubject = substr($thisNewsletter['subject'], 0, 25);
-			echo $email.' | '.$contact->city.' | ('.$newslDay.') | true | '.$shortSubject.'... | ';
-//	 echo __LINE__.' ';
+			$output .= $email.' | '.$contact->city.' | ('.$newslDay.') | true | ';
+
 			$html_code = stripslashes($thisNewsletter['html_code']);
-//	echo __LINE__.' ';
+
 			//sendgrid send email
 			$newsletterData = array(
 				'subject' => $thisNewsletter['subject'],
-				'senderName' => 'BCM',
+				'senderName' => $senderName,
 				'senderEmail' => $senderEmail,
 				'subscriberName' => $first_name,
 				'subscriberEmail' => $email,
@@ -128,7 +132,7 @@ foreach($sendGridList as $series => $list_id) {
 				//print("<pre>".print_r($response, true)."</pre>");
 
 				$statusCode = $response->statusCode() ;
-				print 'statusCode: '. $statusCode.' |'; 
+				$output .= ' statusCode: '. $statusCode.' '; 
 				
 				if($statusCode == '202') {
 
@@ -148,14 +152,24 @@ foreach($sendGridList as $series => $list_id) {
 			}	
 		}
 		else 
-			echo ' false';
+			$output .= $email.' | '.$contact->city.' | ('.$newslDay.') | false ';
 		
-		echo $newline; $count++; 
+		$output .= $newline; 
+		$count++; 
 	}
 	
-	echo $newline;	
+	$output .= $newline;	
 }
 
-$db->close();
+echo $output;
 
+//add to log sendgrid_sent_log
+$insertLog = "INSERT INTO sendgrid_sent_log (date_sent, log) values ('".$today."', '".$output."')";
+$success = $db->query($insertLog); 
+if($success == 1) 
+	echo ' 1';
+else
+	echo ' 0: '.mysqli_error();
+
+$db->close();
 ?>
