@@ -134,21 +134,8 @@ foreach($sendGridList as $series => $list_id) {
 				$statusCode = $response->statusCode() ;
 				$output .= ' statusCode: '. $statusCode.' '; 
 				
-				if($statusCode == '202') {
-
-					//add to the log table
-					$insertLog = "INSERT INTO log_emails_sent (email, newsl_day, series, date_sent) values ('".$email."', '".$newslDay."', '".$series."', '".$today."')";
-
-					$success = $db->query($insertLog); 
-
-					if($success == 1) 
-						echo ' 1';
-					else
-						echo ' 0: '.mysqli_error();
-				}
-				else {
-					print("<pre>".print_r($response, true)."</pre>");
-				}
+				print("<pre>".print_r($response, true)."</pre>");
+			 
 			}	
 		}
 		else 
