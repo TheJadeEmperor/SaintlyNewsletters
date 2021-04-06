@@ -8,10 +8,53 @@ $delete_call = $dir.'include/ajax.php?action=delete';
 <html>
 <head>
     <link href="<?=$dir?>include/buttons.css" rel="stylesheet" type="text/css" media="screen" />    
+
     <link rel="stylesheet" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.10.3/themes/smoothness/jquery-ui.min.css" />
   
+    <style>
+    .subject {
+        position: relative;
+        padding: 10px;
+    }
+    
+    .the-buttons {
+        top:0;
+        left:0; 
+    }
+    
+    .container {
+        position: relative;
+        width: 700px;
+        border: 1px solid black;
+        text-align: left;
+        margin: 0 auto;
+        padding: 10px 5px;
+    }
+    
+    #updateForm {
+        display: none;
+    }
+    
+    #updateForm * {
+        font-size: medium;
+    }
+    
+    .createButtonTop {
+        position: absolute;
+        top: 0px; 
+        right: 0px;
+    }
+    
+    .createButtonBottom {
+        position: absolute;
+        bottom: 0px;
+        right: 0px;
+    }
+    </style>
+
     <script src="http://code.jquery.com/jquery-latest.min.js" type="text/javascript"></script>
     <script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jqueryui/1.11.1/jquery-ui.min.js"></script>
+
     <script>
     jQuery(function() {    
         jQuery('.the-buttons').hide();
