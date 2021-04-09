@@ -1,8 +1,9 @@
 <?php
-include($dir.'include/mysql.php'); 
-include($dir.'include/config.php');
-include($dir.'sendgrid/api_sendgrid.php');
-include $dir.'sendgrid/vendor/autoload.php'; 
+$dir = 'include/';
+include($dir.'class.phpmailer.php');
+include($dir.'class.smtp.php');
+include($dir.'mysql.php'); 
+include($dir.'config.php');
 
 date_default_timezone_set('America/New_York');
 set_time_limit(0); //don't let script time out
@@ -15,7 +16,7 @@ if ($server == 'localhost' || $server == 'saintlynewsletters.test') {
 	$cronjob = 0;
 	
 	if($_GET['cronjob'] == 1 || $_GET['live'] == 1) 
-		$cronjob = 1; //live mode in localhost
+		$cronjob = 1; //live mode override in localhost
 }
 else { //cron job - newline is \n
 	$newline = "\n";
@@ -30,9 +31,11 @@ $resN = $db->query($selN);
 while($n = $resN->fetch_assoc()) {
 
 	$series = $n['series'];
-	$day = intval($n['day']);
+
+	if(is_numeric($n['day']))
+		$day = intval($n['day']);
 	
-	if(is_numeric($day))
+	//if(is_numeric($day))
 	$newslArray[$series][$day] = array(
 		'subject' => $n['subject'],
 		'file' => $n['file'],
@@ -40,123 +43,101 @@ while($n = $resN->fetch_assoc()) {
 	);
 }
 
-if($cronjob == 0){
-	//print("<pre>".print_r($newslArray['makemoneysurveys'], true)."</pre>");
+if($cronjob == 0) { //display newslArray
+	// print("<pre>".print_r($newslArray['AnimeFanservice'], true)."</pre>"); 
+	print("<pre>".print_r($smtpArray, true)."</pre>");
 }
 
-//series name from DB => list_id from sendgrid
-$sendGridList = array(
-	'BlackCrimesMatter' => '6d1d107d-9fe7-404e-9e17-94c2a51eea8c',
-	'AnimeFanservice' => '1d43f5df-ff51-4542-a472-3f8de8a771f7', 
-	'makemoneysurveys' => '4b47a362-1c44-4103-90f2-feeb13cd02c4',
-	'NeobuxUltimateStrategy' => 'f9033b09-3a99-4a95-81f9-66a72cd7994d'
-);
 
-$senderNameList = array(
-	'BlackCrimesMatter' => array(
-		'senderEmail' => 'admin@blackcrimesmatters.com',
-		'senderName' => 'BCM'),
-	'AnimeFanservice' => array(
-		'senderEmail' => 'animefavoritechannel@gmail.com',
-		'senderName' => 'Anime Empire'),
-	'makemoneysurveys' => array(
-		'senderEmail' => 'contact@bestpayingsites.com',
-		'senderName' => 'Best Paying Surveys'),
-	'NeobuxUltimateStrategy' => array(
-		'senderEmail' => 'contact@bestpayingsites.com',
-		'senderName' => 'Best Paying Sites'),
-);
+$output = ' cronjob: '.$cronjob.' ';  
 
-echo ' cronjob: '.$cronjob.' ';  
+//loop through all contacts by series 
+$selS = 'SELECT * FROM '.$subscribersTable.' ORDER BY series asc';
+$resS = $db->query($selS);
 
-//connect to sendgrid api
-$sendGridAPI = new sendGridAPI(SENDGRID_API_KEY);
+while($sub = $resS->fetch_assoc()) {
 
-$count = 0;
-foreach($sendGridList as $series => $list_id) {
+	$emailTo = $sub['email'].' '; 
+	$subscribed = $sub['subscribed'];
+	//$series = $sub['series'];
+
+	//calculate # of days since added 
+	$today = date('Y-m-d', time());
+	$todayDT = new DateTime($today);
+
+	//check for empty date
+	if(empty($subscribed)) 
+		$subscribed = $today;
 	
-	$senderName = $senderNameList[$series]['senderName'];
-	$senderEmail = $senderNameList[$series]['senderEmail'];
-	$output .= $series.' | '.$senderName.' | '.$senderEmail.' | '.$newline; 
+	$addedDT = new DateTime($subscribed);
 	
-	//get all contacts in list
-	$list = $sendGridAPI -> list_get ($list_id);
+	$newslDay = $addedDT->diff($todayDT)->format("%a");
+	
+	$thisNewsletter = $newslArray[$series][$newslDay];
 
-	if($cronjob == 0) { //show array of contacts
-		//print("<pre>".print_r($list->contact_sample[0], true)."</pre>");
+	if ($series != $sub['series']) {
+		$series = $sub['series'];
+		$output .= $series.' '.$newline;
 	}
-	
-	if(!empty($list))
-	foreach($list->contact_sample as $contact) {
 
-		$email = $contact->email;
-		$first_name = $contact->first_name; 
-		$join_date =  $contact->city; //date is stored as city 
+	$output .= $emailTo.' | '.$subscribed.' | ('.$newslDay.') | ';
+	if(is_array($thisNewsletter)) {
+		$sendEmailSubject = $thisNewsletter['subject'];
+		$displayEmailSubject = substr($thisNewsletter['subject'], 0, 25);
 
-		//calculate # of days since added 
-		$today = date('Y-m-d', time());
-		$todayDT = new DateTime($today);
-		
-		//check for empty date
-		if(empty($join_date)) $join_date = $today;
-		$addedDT = new DateTime($join_date);
-		
-		$newslDay = $addedDT->diff($todayDT)->format("%a");
-		
-		$thisNewsletter = $newslArray[$series][$newslDay];
+		$sendEmailBody = stripslashes($thisNewsletter['html_code']);
+		// $sendEmailBody = $thisNewsletter['html_code'];
+		$output .= '<b> true </b> | '.$displayEmailSubject.'... '.$newline;
 
-		//if match 
-		if(is_array($thisNewsletter)) {
-			$shortSubject = substr($thisNewsletter['subject'], 0, 25);
-			$output .= $email.' | '.$contact->city.' | ('.$newslDay.') | true | ';
-
-			$html_code = stripslashes($thisNewsletter['html_code']);
-
-			//sendgrid send email
-			$newsletterData = array(
-				'subject' => $thisNewsletter['subject'],
-				'senderName' => $senderName,
-				'senderEmail' => $senderEmail,
-				'subscriberName' => $first_name,
-				'subscriberEmail' => $email,
-				'htmlContent' => $html_code
-			);
-
-			//send the newsletter - live only
-			if($cronjob == 1) {
-	
-				$sendgridMail = new \SendGrid\Mail\Mail(); 
-				$sendgridClass = new \SendGrid(SENDGRID_API_KEY);
- 
-				$response = sendEmail($sendgridClass, $sendgridMail, $newsletterData); 
-				//print("<pre>".print_r($response, true)."</pre>");
-
-				$statusCode = $response->statusCode() ;
-				$output .= ' statusCode: '. $statusCode.' '; 
+		//send the newsletter - live only
+		if($cronjob == 1) {
+			//// send email \\\\
+			$mail = new PHPMailer();
+			$mail->IsSMTP();         // send via SMTP
+			$mail->SMTPSecure = 'ssl';
+			$mail->Host     = $smtpHost; // SMTP servers
+			$mail->SMTPAuth = true;     // turn on SMTP authentication
+			$mail->Username = $smtpUsername;  // SMTP username
+			$mail->Password = $smtpPassword; // SMTP password
+			$mail->From     = $smtpFromEmail;
+			$mail->FromName = $smtpFromName;
+			$mail->AddAddress($emailTo);  
+			$mail->WordWrap = 50; // set word wrap
+			$mail->IsHTML(true);  // send as HTML
+			
+			$mail->Subject  =  $sendEmailSubject;
+			$mail->Body     =  $sendEmailBody;
+			$mail->AltBody  =  $sendEmailBody;
+			
+			if(!$mail->Send())
+				echo "Message was <b>not</b> sent - ".$mail->ErrorInfo.'<br />';
+			else
+				echo "Message to $emailTo has been sent<br />";
 				
-				print("<pre>".print_r($response, true)."</pre>");
-			 
-			}	
+			//// send email \\\\
+
 		}
-		else 
-			$output .= $email.' | '.$contact->city.' | ('.$newslDay.') | false ';
-		
-		$output .= $newline; 
-		$count++; 
 	}
-	
-	$output .= $newline;	
+	else 
+		$output .= ' false '.$newline;
+
 }
+
 
 echo $output;
+
+
+exit;
 
 //add to log sendgrid_sent_log
 $insertLog = "INSERT INTO sendgrid_sent_log (date_sent, log) values ('".$today."', '".$output."')";
 $success = $db->query($insertLog); 
+
 if($success == 1) 
 	echo ' 1';
 else
 	echo ' 0: '.mysqli_error();
 
 $db->close();
+
 ?>
