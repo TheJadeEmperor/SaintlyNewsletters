@@ -31,6 +31,7 @@ $resS = $db->query($selS);
 $count = 0;
 while($sub = $resS->fetch_assoc()) {
 
+    $id = $sub['id'];
 	$emailTo = $sub['email'].' '; 
 	$subscribed = $sub['subscribed'];
 	$series = $sub['series'];
@@ -43,21 +44,21 @@ while($sub = $resS->fetch_assoc()) {
         'origin' => $origin
     );
 
-    $subRows[$series] .= '<tr><td>'.$count.'</td><td>'.$emailTo.'</td><td>'.$subscribed.'</td><td>'.$origin.'</td>
+    $subRows[$series] .= '<tr><td><a href="javascript:updateSaleDialog(\''.$id.'\')">'.$count.'</a></td><td><a href="javascript:updateSaleDialog(\''.$id.'\')">'.$emailTo.'</a></td><td>'.$subscribed.'</td><td>'.$origin.'</td>
     </tr>';
 
     $count++;
 }
 
-print("<pre>".print_r( $subArray, true)."</pre>"); 
-
-
-//make pop up form for updating sub
-
+// print("<pre>".print_r( $subArray, true)."</pre>"); 
 
 
 $srcDir = 'include/';
-$bootDir = 'include/bootstrap/'
+$bootDir = 'include/bootstrap/';
+$ajaxCreate = $srcDir.'ajaxSubs.php?action=create';
+$ajaxRead = $srcDir.'ajaxSubs.php?action=read';
+$ajaxUpdate = $srcDir.'ajaxSubs.php?action=update';
+$ajaxDelete = $srcDir.'ajaxSubs.php?action=delete';
 ?>
 
     <link href="include/css/admin.css" rel="stylesheet" />
@@ -80,16 +81,17 @@ $bootDir = 'include/bootstrap/'
 
     <!--jquery scripts-->
     <script src="<?= $srcDir ?>media/js/complete.js"></script>
-     <script src="<?= $srcDir ?>media/js/jquery.min.js" type="text/javascript"></script>
-     <script src="<?= $srcDir ?>media/js/jquery-ui.js" type="text/javascript"></script>
-     <script src="<?= $srcDir ?>media/js/jquery.validate.js" type="text/javascript"></script>
+    <script src="<?= $srcDir ?>media/js/jquery.min.js" type="text/javascript"></script>
+    <script src="<?= $srcDir ?>media/js/jquery-ui.js" type="text/javascript"></script>
+    <script src="<?= $srcDir ?>media/js/jquery.validate.js" type="text/javascript"></script>
      
-     <script src="<?= $bootDir ?>js/bootstrap.min.js"></script><!--bootstrap scripts-->
-     <script src="<?= $srcDir ?>media/js/jquery.dataTables.min.js" type="text/javascript"></script> <!--dataTable scripts-->
+    <script src="<?= $bootDir ?>js/bootstrap.min.js"></script><!--bootstrap scripts-->
+    <script src="<?= $srcDir ?>media/js/jquery.dataTables.min.js" type="text/javascript"></script> <!--dataTable scripts-->
 
 <script> 
 $(document).ready( function () {
-    $('#AnimeFanservice').dataTable({  
+    //declare dataTables for newslsetter series
+    var tableAF = $('#AnimeFanservice').dataTable({  
         "bJQueryUI": true,
         "sPaginationType": "full_numbers",
         "iDisplayLength": 50
@@ -112,9 +114,97 @@ $(document).ready( function () {
         "sPaginationType": "full_numbers",
         "iDisplayLength": 50
     });
-})
-</script>
 
+}); //document.ready
+
+    function updateSaleDialog (salesID) {
+        $('#saveButton').attr('disabled', true);
+        fillSalesForm(salesID); //fill in the form fields from database
+
+        $('#addSaleForm').dialog({
+            modal: true,
+            width: 450,
+            position: 'center',
+            show: {
+                effect: "explode",
+                duration: 500
+            },
+            hide: {
+                effect: "explode",
+                duration: 500
+            },
+            beforeClose: function( event, ui ) {
+                $('#saveButton').attr('disabled', false);
+                $('#updateButton').attr('disabled', false);
+                $("input[type=text]").val("");
+                $("input[id=id]").val("");
+            }
+        });
+    }
+    
+    function insertSale () {
+        if ($('#addSaleForm').valid()) {
+            $.ajax({
+                type: "POST",
+                url: "<?=$ajaxCreate?>",
+                data: $('#addSaleForm').serialize(),
+                success: function(msg) {
+                    alert('Message: '+msg);
+                    location.reload();
+                    //custTable.ajax.reload( null, false );
+                }
+            });
+            closeDialog();
+        }
+    }
+
+function updateSaleDB () {
+    var id = $('#id').val();
+    if ($('#addSaleForm').valid()) {
+        $.ajax({
+            type: "POST",
+            url: "<?=$ajaxUpdate?>",
+            data: $('#addSaleForm').serialize()+'&id='+id,
+            success: function(msg) {
+                //alert('Message: '+msg);
+                //////////////////////////////////////////////////////
+                tableAF.ajax.reload(); //decide which table to reload
+                //////////////////////////////////////////////////////
+            }
+        });
+    }
+    closeDialog();
+}
+
+function fillSalesForm (salesID) {
+	console.log('salesID '+salesID);
+	$.ajax({ 
+		type        : 'POST',
+		url         : '<?=$ajaxRead?>', 
+		data        : 'id='+salesID,
+		success     : function(data) {
+			data = $.parseJSON(data);
+			console.log('data '+data);
+			$.each(data, function(name, value) {
+				//console.log(name+' '+value);
+				
+				if(name == 'id') $('#sale_id').val(value);
+				
+				$('#'+name).val(value);
+			});          
+		}
+	});
+}
+
+function closeDialog () {
+   $('button').attr('disabled', false); //enable all buttons
+   $('#addSaleForm').dialog("close"); //close the dialog
+   //clear the sales form
+   $("input[type=text]").val("");
+   $("#addSaleForm")[0].reset();
+}
+
+</script>
 
 <?
 
@@ -130,4 +220,49 @@ echo subTable('NeobuxUltimateStrategy', $subRows['NeobuxUltimateStrategy']);
 echo '<h2>MakeMoneySurveys</h2>';
 echo subTable('makemoneysurveys', $subRows['makemoneysurveys']);
 
+$salesFields = array(
+    'email' => array(
+        'id' => 'email',
+        'size' => '30',
+        'maxsize' => '50'
+    ),
+    'origin' => array(
+        'id' => 'origin',
+        'size' => '30',
+        'maxsize' => '50'
+    ),
+    'subscribed' => array(
+        'id' => 'subscribed',
+        'maxsize' => '20'
+    ),
+
+);
+
 ?>
+
+<form id="addSaleForm" title="Update Subscriber">
+    <div style="padding: 10px;">
+        <table>
+            <tr>
+                <td align="right">ID</td>
+                <td width="5px"></td>
+                <td align="left"><input type="button" id="sale_id" /><input type="hidden" id="id" /></td>
+            </tr>
+            <?
+            foreach($salesFields as $disp => $textBox) {
+                echo '<tr title="'.$textBox['id'].'">
+                    <td align="right" width="120px">'.$disp.'</td><td></td>
+                    <td align="left"><input type="text" class="activeField" name="'.$textBox['id'].'" id="'.$textBox['id'].'" size="'.$textBox['size'].'" /></td>
+                </tr>';
+            }
+            ?>
+        </table>
+    </div>
+    <br />
+    <center>
+        <input type="button" class="btn btn-success" id="saveButton" value="Save" onclick="insertSale()" />
+        <input type="button" class="btn btn-info" id="updateButton" value="Update" onclick="updateSaleDB()" />
+        <input type="button" class="btn btn-warning" id="cancelButton" value="Cancel" onclick="closeDialog()" />
+    </center>
+   
+</form>

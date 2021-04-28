@@ -1,6 +1,5 @@
 body, container {	
 	color: #8467D7;
-	background-image: url('../../images/admin/sky.jpg');
 	background-attachment: fixed;
 	background-repeat: repeat-x;
 	background-color: #FFFFFF;
@@ -9,6 +8,14 @@ body, container {
 	font-weight: 100;
 	text-align: center;
 	margin: 0px;
+}
+
+#addSaleForm {
+	display: none;
+}
+
+.panel-heading {
+	padding-bottom: 0px;
 }
 
 #menuContainer {
