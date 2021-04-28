@@ -45,11 +45,11 @@ while($n = $resN->fetch_assoc()) {
 
 if($cronjob == 0) { //display newslArray
 	// print("<pre>".print_r($newslArray['AnimeFanservice'], true)."</pre>"); 
-	print("<pre>".print_r($smtpArray, true)."</pre>");
+	// print("<pre>".print_r($smtpArray, true)."</pre>");
 }
 
 
-$output = ' cronjob: '.$cronjob.' ';  
+$output = ' cronjob: '.$cronjob.' '.$newline;  
 
 //loop through all contacts by series 
 $selS = 'SELECT * FROM '.$subscribersTable.' ORDER BY series asc';
@@ -59,7 +59,6 @@ while($sub = $resS->fetch_assoc()) {
 
 	$emailTo = $sub['email'].' '; 
 	$subscribed = $sub['subscribed'];
-	//$series = $sub['series'];
 
 	//calculate # of days since added 
 	$today = date('Y-m-d', time());
@@ -77,10 +76,12 @@ while($sub = $resS->fetch_assoc()) {
 
 	if ($series != $sub['series']) {
 		$series = $sub['series'];
-		$output .= $series.' '.$newline;
+		$output .= $newline.$series.' '.$newline;
 	}
 
 	$output .= $emailTo.' | '.$subscribed.' | ('.$newslDay.') | ';
+	//BlackCrimesMatter
+	if ($series != 'BlackCrimesMatter')
 	if(is_array($thisNewsletter)) {
 		$sendEmailSubject = $thisNewsletter['subject'];
 		$displayEmailSubject = substr($thisNewsletter['subject'], 0, 25);
@@ -89,11 +90,20 @@ while($sub = $resS->fetch_assoc()) {
 		// $sendEmailBody = $thisNewsletter['html_code'];
 		$output .= '<b> true </b> | '.$displayEmailSubject.'... '.$newline;
 
+		//get smtp values
+		$smtp = $smtpArray[$series];
+		$smtpHost = $smtp['smtpHost'];
+		$smtpUsername = $smtp['smtpUsername'];
+		$smtpPassword = $smtp['smtpPassword'];
+		$smtpFromEmail = $smtp['smtpFromEmail'];
+		$smtpFromName = $smtp['smtpFromName'];
+
 		//send the newsletter - live only
 		if($cronjob == 1) {
 			//// send email \\\\
 			$mail = new PHPMailer();
 			$mail->IsSMTP();         // send via SMTP
+			// $mail->SMTPDebug = SMTP::DEBUG_SERVER;
 			$mail->SMTPSecure = 'ssl';
 			$mail->Host     = $smtpHost; // SMTP servers
 			$mail->SMTPAuth = true;     // turn on SMTP authentication
