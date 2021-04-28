@@ -16,7 +16,7 @@ function update_html_code ($series) {
 		$fileName = 'http://localhost/SaintlyNewsletters/'.$series.'/template.php?id='.$id;
 		$html_code = file_get_contents($fileName);
 		
-		$html_code = parse_variables_html($html_code); 
+		//$html_code = parse_variables_html($html_code); 
 
 		//if($count==2) echo $html_code;
 		
