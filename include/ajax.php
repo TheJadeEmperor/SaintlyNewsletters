@@ -15,7 +15,8 @@ switch($_GET['action']) {
 			day='".$_REQUEST['day']."', 
             subject='".$_REQUEST['subject']."',
             file='".$_REQUEST['file']."',
-            product='".$_REQUEST['product']."'
+            product='".$_REQUEST['product']."',
+			series='".$_REQUEST['series']."'
             WHERE id='".$id."'";
         
 		$success = $db->query($update);

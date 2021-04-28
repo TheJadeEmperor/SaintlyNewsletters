@@ -269,7 +269,8 @@ $delete_call = $dir.'include/ajax.php?action=delete';
             <select id="file" name="file"><?=$dropDownMenu?></select></span></td>
         </tr>
         <tr>
-            <td colspan="2">Product<br /><input type="text" name="product" id="product" size="10"/> </td>
+            <td colspan="">Product<br /><input type="text" name="product" id="product" size="10"/> </td>
+			<td colspan="">Series<br /><input type="text" name="series" id="series" size="20"/> </td>
         </tr>
     </table>
     <br />
