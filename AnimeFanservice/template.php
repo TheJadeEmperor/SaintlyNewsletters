@@ -4,7 +4,7 @@ include($dir.'include/settings.php');
 
 $imgDir = '';
 $supportEmail = 'AnimeFavoriteChannel@gmail.com'; 
-$nameVar = '**NAME**';
+$nameVar = 'Anime Fan';
 ?>
 <center>
 <table width="728px" border="0" cellspacing="0" cellpadding="0px">
