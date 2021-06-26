@@ -52,7 +52,8 @@ if($cronjob == 0) { //display newslArray
 $output = ' cronjob: '.$cronjob.' '.$newline;  
 
 //loop through all contacts by series 
-$selS = 'SELECT * FROM '.$subscribersTable.' ORDER BY series asc';
+$where = ' WHERE series <> "AllSubscribers"';
+$selS = 'SELECT * FROM '.$subscribersTable.' '.$where.' ORDER BY series asc';
 $resS = $db->query($selS);
 
 while($sub = $resS->fetch_assoc()) {
@@ -80,8 +81,9 @@ while($sub = $resS->fetch_assoc()) {
 	}
 
 	$output .= $emailTo.' | '.$subscribed.' | ('.$newslDay.') | ';
+	
 	//BlackCrimesMatter
-	if ($series != 'BlackCrimesMatter')
+	//if ($series != 'BlackCrimesMatter')
 	if(is_array($thisNewsletter)) {
 		$sendEmailSubject = $thisNewsletter['subject'];
 		$displayEmailSubject = substr($thisNewsletter['subject'], 0, 25);
@@ -103,7 +105,7 @@ while($sub = $resS->fetch_assoc()) {
 			//// send email \\\\
 			$mail = new PHPMailer();
 			$mail->IsSMTP();         // send via SMTP
-			// $mail->SMTPDebug = SMTP::DEBUG_SERVER;
+			//$mail->SMTPDebug = SMTP::DEBUG_SERVER;
 			$mail->SMTPSecure = 'ssl';
 			$mail->Host     = $smtpHost; // SMTP servers
 			$mail->SMTPAuth = true;     // turn on SMTP authentication
