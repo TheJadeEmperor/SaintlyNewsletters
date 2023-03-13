@@ -1,11 +1,12 @@
-<?
+<?php
 $dir = '../';
 include($dir.'include/settings.php');
 
-$X_img = '<img src="http://neobuxultimatestrategy.com/images/newsletter/X.jpg" width="22px">';
-$newsletterImage = 'http://neobuxultimatestrategy.com/images/newsletter/';
-$productLink = 'http://neobuxultimatestrategy.com/';
-$msLink = 'http://neobuxultimatestrategy.com/minisite';
+$domain = 'http://ultimateneobuxstrategy.com/';
+$productLink = $domain;
+$msLink = $domain.'minisite';
+$newsletterImage = $domain.'images/newsletter/';
+$X_img = '<img src="'.$newsletterImage.'X.jpg" width="22px">';
 $nameVar = '**NAME**';
 ?>
 <center>
@@ -47,7 +48,7 @@ $nameVar = '**NAME**';
 					<p>&nbsp; </p>
 					Benjamin Louie <br />
 					Neobux Ultimate Strategy<br />
-					<a href="http://neobuxultimatestrategy.com">http://neobuxultimatestrategy.com</a>
+					<a href="<?=$productLink?>"><?=$productLink?></a>
 					</font>
                     </td>
 				</tr>
@@ -57,7 +58,7 @@ $nameVar = '**NAME**';
                         <tbody>
                             <tr>
                                 <td align="center" height="40px">
-                                    <b><a href="http://neobuxultimatestrategy.com" style="color: #fff;">Neobux Ultimate Strategy E-Course</a></b>
+                                    <b><a href="<?=$productLink?>" style="color: #fff;">Neobux Ultimate Strategy E-Course</a></b>
                                 </td>       
                             </tr>
                         </tbody>
