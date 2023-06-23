@@ -1,4 +1,4 @@
-<?
+<?php
 $dir = '../';
 $read_call = $dir.'include/ajax.php?action=read';
 $update_call = $dir.'include/ajax.php?action=update';
@@ -79,7 +79,9 @@ $delete_call = $dir.'include/ajax.php?action=delete';
     }
     
     function fillForm(id) {
-        $.getJSON("<?=$read_call?>&id="+id+"", function( data ) {
+        console.log("<?=$read_call?>&id="+id);
+        $.getJSON("<?=$read_call?>&id="+id, function( data ) {
+            console.log("<?=$read_call?>&id="+id);
             $.each( data, function( key, val ) {
                 if(data.hasOwnProperty(key))
                     $('input[name='+key+']').val(val);

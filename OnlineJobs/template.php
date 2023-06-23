@@ -1,8 +1,16 @@
-<?
+<?php
 $dir = '../';
 include($dir.'include/settings.php');
 
-$productLink = 'http://bestpayingsites.com/?action=get-cash-for-surveys';
+$bpsLink = 'http://bestpayingsites.com/?action=get-cash-for-surveys';
+$paidSocialLink = 'https://hop.clickbank.net/?affiliate=ironprice&vendor=socialpaid&pid=videojobquiz495';
+$writingJobsLink = 'https://bestpayingsites.com/?action=real-translator-jobs';
+
+
+$domain = 'https://ultimateneobuxstrategy.com/';
+$newsletterImage = $domain.'images/newsletter/';
+$X_img = '<img src="'.$newsletterImage.'X.jpg" width="22px">';
+
 $imgDir = 'http://bestpayingsites.com/images/';
 $supportEmail = '**SIG_EMAIL**'; 
 $nameVar = '**NAME**';
@@ -17,17 +25,14 @@ $nameVar = '**NAME**';
                             
                         <font size="4">
                         <?
-                        $options = array(
-                            'series' => 'makemoneysurveys',
-                            'folder' => 'MakeMoneySurveys'
-                        );
-
                         if ($_GET['id']) {
-                            $news = $db->get_row("SELECT file FROM newsletters WHERE id='".$_GET['id']."'");
-                            include($news->file);
+							$query = "SELECT file FROM newsletters WHERE id='".$_GET['id']."'";
+							$result = mysqli_query($conn, $query);
+							$news = $result->fetch_assoc();
+							
+                            include($news['file']);
                         }
-
-                        ?> 
+                        ?>
 
                         <p>&nbsp; </p>
                         Benjamin Louie<br />

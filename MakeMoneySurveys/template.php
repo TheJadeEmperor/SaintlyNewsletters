@@ -2,10 +2,10 @@
 $dir = '../';
 include($dir.'include/settings.php');
 
-$X_img = '<img src="http://neobuxultimatestrategy.com/images/newsletter/X.jpg" width="22px">';
+$X_img = '<img src="https://ultimateneobuxstrategy.com/images/newsletter/X.jpg" width="22px">';
 $productLink = 'http://bestpayingsites.com/?action=get-cash-for-surveys';
 $imgDir = 'http://bestpayingsites.com/images/banners/surveys/';
-$supportEmail = '**SIG_EMAIL**'; 
+$supportEmail = 'neobux@bestpayingsites.com'; 
 $nameVar = '**NAME**';
 ?>
 <center>

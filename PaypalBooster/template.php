@@ -1,4 +1,4 @@
-<?
+<?php
 $dir = '../';
 include($dir.'include/settings.php');
 
@@ -36,8 +36,11 @@ $nameVar = '**NAME**';
                     );
 
                     if ($_GET['id']) {
-                        $news = $db->get_row("SELECT file FROM newsletters WHERE id='".$_GET['id']."'");
-                        include($news->file);
+                        $query = "SELECT file FROM newsletters WHERE id='".$_GET['id']."'";
+                        $result = mysqli_query($conn, $query);
+                        $news = $result->fetch_assoc();
+                        
+                        include($news['file']);
                     }
 
                     ?> 	
@@ -45,7 +48,7 @@ $nameVar = '**NAME**';
                     <p>&nbsp; </p>
                     Paypal Booster<br />
                     Profit with PTCs<br />
-                    <a href="mailto:booster@bestpayingsites.com">booster@bestpayingsites.com</a><br />
+                    <a href="mailto:neobux@bestpayingsites.com">neobux@bestpayingsites.com</a><br />
                     </font>
                 </td>
             </tr>

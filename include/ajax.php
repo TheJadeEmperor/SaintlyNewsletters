@@ -6,7 +6,7 @@ include($dir.'include/config.php');
 $id = $_REQUEST['id'];
 
 foreach($_REQUEST as $request => $value) {
-    $_REQUEST[$request] = mysql_real_escape_string($value);
+    $_REQUEST[$request] = mysqli_real_escape_string($db, $value);
 }
 
 switch($_GET['action']) {
@@ -49,7 +49,7 @@ switch($_GET['action']) {
         
     case 'read':
     default:
-		$querySelect = "SELECT * FROM newsletters WHERE id='".$id."'";
+	    $querySelect = "SELECT * FROM newsletters WHERE id='".$id."'";
 		$resN = $db->query($querySelect) or die($db->error);
         $news = $resN->fetch_assoc();
 

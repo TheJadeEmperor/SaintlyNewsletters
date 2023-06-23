@@ -2,7 +2,7 @@
 $dir = '../';
 include($dir.'include/settings.php');
 
-$domain = 'http://ultimateneobuxstrategy.com/';
+$domain = 'https://ultimateneobuxstrategy.com/';
 $productLink = $domain;
 $msLink = $domain.'minisite';
 $newsletterImage = $domain.'images/newsletter/';
@@ -17,7 +17,7 @@ $nameVar = '**NAME**';
 			<table width="100%" style="color: #fff;"><tr> 
 				<td width="468px">
 				<a href="<?=$productLink?>">
-					<img src="http://bestpayingsites.com/images/banners/ebook.jpg" /></a>
+					<img src="https://bestpayingsites.com/images/banners/ebook.jpg" /></a>
 				</td>
 				<td align="center">
 					<font size="4"><b>PTC Newsletter</b></font>

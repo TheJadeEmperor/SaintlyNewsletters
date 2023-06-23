@@ -1,0 +1,69 @@
+
+
+NUS Membership
+https://buy.stripe.com/6oE5mW98176e5iw28h
+ 
+
+=============
+webhook tasks
+================
+ 
+
+----------------
+
+	separate database by productID
+	nus - nus & ptc-ms
+	ppb bps eps
+	?? - copy webhook to bps
+---------------
+
+
+=========
+webhook 
+
+stripe cli 
+add endpoint in local
+ 
+composer require stripe/stripe-php
+
+http://localhost:4242
+
+php -S localhost:4242
+
+stripe login
+stripe listen --forward-to localhost:4242/webhook.php
+stripe trigger payment_intent.succeeded
+
+
+webhook
+=========
+
+
+
+Fired Travel Agent Wants Revenge! Here's The Secret To Cheap Flights
+https://www.myairfaresecrets.com/?hop=ironprice
+
+Thank you so much for booking with me in the past. I happen to come across a guide called MyAirfareSecrets that offers insider tips and tricks to find the cheapest airfare for your next trip, allowing you to save hundreds or even thousands of dollars on your flights. 
+https://www.myairfaresecrets.com/?hop=ironprice
+Here you go. I hope this helps you in your travels.
+
+
+
+PaidSocialMediaJobs (socialpaid)
+$94 regular price - $47 discount
+https://hop.clickbank.net/?affiliate=ironprice&vendor=socialpaid&pid=videojobquiz495
+https://bit.ly/social-media-paid-online
+
+
+http://helpdesk.paidsocialmediajobs.com/support/home
+https://payingsocialmediajobs.com/affiliates/
+
+********************************************************
+
+Online Writing Jobs (easywriter) 
+$1 trial + Recurring Billing 
+https://hop.clickbank.net/?affiliate=ironprice&vendor=easywriter&pid=instantapply
+https://bit.ly/easy-online-writing-jobs
+
+
+https://paidonlinewritingjobs.com/affiliates/
